@@ -11,4 +11,12 @@ class DepositRepository(private val dao: DepositDao) {
     suspend fun saveCalculation(calculation: DepositEntity) {
         dao.insert(calculation)
     }
+
+    suspend fun deleteAll() {
+        dao.deleteAll()
+    }
+
+    suspend fun delete(calculation: DepositEntity) {
+        dao.delete(calculation)
+    }
 }

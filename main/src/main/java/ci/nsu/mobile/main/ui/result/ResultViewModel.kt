@@ -9,15 +9,16 @@ import ci.nsu.mobile.main.data.database.DepositDatabase
 import ci.nsu.mobile.main.data.database.DepositEntity
 import ci.nsu.mobile.main.data.model.DepositResultData
 import kotlinx.coroutines.launch
-import kotlin.math.pow
 
 class ResultViewModel(application: Application) : AndroidViewModel(application) {
 
     private val repository = DepositDatabase.getDatabase(application).depositDao()
-    // в реальности лучше через репозиторий, но для простоты пока так
 
     private val _resultData = MutableLiveData<DepositResultData>()
     val resultData: LiveData<DepositResultData> = _resultData
+
+    private val _isSaved = MutableLiveData(false)
+    val isSaved: LiveData<Boolean> = _isSaved
 
     fun calculateAndShow(data: DepositResultData) {
         val monthlyRate = data.interestRate / 100 / 12
@@ -34,6 +35,7 @@ class ResultViewModel(application: Application) : AndroidViewModel(application) 
         data.finalAmount = (amount * 100).toInt() / 100.0
         data.interestEarned = (totalInterest * 100).toInt() / 100.0
         _resultData.value = data
+        _isSaved.value = false  // Сбрасываем флаг при новом расчёте
     }
 
     fun saveCalculation(data: DepositResultData) {
@@ -48,6 +50,8 @@ class ResultViewModel(application: Application) : AndroidViewModel(application) 
                 calculationDate = System.currentTimeMillis()
             )
             repository.insert(entity)
+            _isSaved.postValue(true)  // Блокируем кнопку
         }
     }
+
 }

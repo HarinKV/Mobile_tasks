@@ -43,6 +43,12 @@ class ResultFragment : Fragment() {
             if (data != null) updateUI(data)
         }
 
+        // БЛОКИРОВКА КНОПКИ ПОСЛЕ СОХРАНЕНИЯ
+        viewModel.isSaved.observe(viewLifecycleOwner) { saved ->
+            binding.buttonSave.isEnabled = !saved
+            binding.buttonSave.text = if (saved) "Сохранено" else "Сохранить"
+        }
+
         binding.buttonSave.setOnClickListener {
             viewModel.resultData.value?.let { data ->
                 viewModel.saveCalculation(data)
